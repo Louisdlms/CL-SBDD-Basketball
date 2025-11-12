@@ -1,6 +1,4 @@
--- ======================================================
--- ✅ 1️⃣ Joueurs avec le plus grand total de points pour leur équipe nationale
--- ======================================================
+-- Joueurs avec le plus grand total de points pour leur équipe nationale
 SELECT 
     p.name AS player_name,
     nt.country AS national_team,
@@ -15,10 +13,8 @@ GROUP BY p.ID_Pla, nt.country
 ORDER BY total_points DESC
 LIMIT 10;
 
--- ======================================================
--- ✅ 2️⃣ Les 3 joueurs avec le meilleur % de lancers francs 
---     dans la finale du Championnat d’Europe 2002
--- ======================================================
+
+-- Les 3 joueurs avec le meilleur % de lancers francs dans la finale du Championnat d’Europe 2002
 SELECT 
     p.name,
     pi.ft_perc AS free_throw_percentage
@@ -32,9 +28,8 @@ WHERE c.name = 'EuroBasket'
 ORDER BY pi.ft_perc DESC
 LIMIT 3;
 
--- ======================================================
--- ✅ 3️⃣ Club ayant la taille moyenne de joueurs la plus élevée
--- ======================================================
+
+-- Club ayant la taille moyenne de joueurs la plus élevée
 SELECT 
     c.name AS club_name,
     ROUND(AVG(p.height), 1) AS average_height
@@ -45,10 +40,8 @@ GROUP BY c.ID_Clu
 ORDER BY average_height DESC
 LIMIT 1;
 
--- ======================================================
--- ✅ 4️⃣ Sponsor ayant sponsorisé le plus d’équipes nationales 
---     qui ont gagné le Championnat du Monde
--- ======================================================
+
+-- Sponsor ayant sponsorisé le plus d’équipes nationales qui ont gagné le Championnat du Monde
 SELECT 
     s.name AS sponsor_name,
     COUNT(DISTINCT sn.ID_Nat) AS nb_winning_teams
@@ -64,10 +57,8 @@ GROUP BY s.ID_Spo
 ORDER BY nb_winning_teams DESC
 LIMIT 1;
 
--- ======================================================
--- ✅ 5️⃣ Pour chaque club, joueurs avec le meilleur % de tirs à 3 points
---     dans la saison en cours (ex: '2024-2025')
--- ======================================================
+
+-- Pour chaque club, joueurs avec le meilleur % de tirs à 3 points dans la saison en cours (ex: '2024-2025')
 SELECT 
     c.name AS club_name,
     p.name AS player_name,
@@ -81,10 +72,8 @@ JOIN Competition co ON g.ID_Com = co.ID_Com
 WHERE co.season = '2024-2025'
 GROUP BY c.ID_Clu;
 
--- ======================================================
--- ✅ 6️⃣ Pour un club particulier (ex: FC Barcelona), 
---     le joueur avec le plus grand nombre moyen de passes décisives
--- ======================================================
+
+-- Pour un club particulier (ex: FC Barcelona), le joueur avec le plus grand nombre moyen de passes décisives
 SELECT 
     p.name AS player_name,
     ROUND(AVG(pi.assists), 2) AS avg_assists_per_game
@@ -98,9 +87,8 @@ GROUP BY p.ID_Pla
 ORDER BY avg_assists_per_game DESC
 LIMIT 1;
 
--- ======================================================
--- ✅ 7️⃣ Clubs ayant gagné l’Euroleague plus de 3 fois
--- ======================================================
+
+-- Clubs ayant gagné l’Euroleague plus de 3 fois
 SELECT 
     c.name AS club_name,
     COUNT(*) AS wins
