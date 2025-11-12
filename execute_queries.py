@@ -1,40 +1,46 @@
 import sqlite3
 
-# Connexion à la base
-conn = sqlite3.connect("basketball.db")
-cursor = conn.cursor()
+def execute_queries_from_file(db_path, sql_file_path):
+    """Exécute les requêtes SQL depuis un fichier sur une base de données SQLite."""
 
-# Liste des titres pour chaque requête (dans le même ordre que queries.sql)
-titles = [
-    "Top 10 joueurs par points totaux en équipe nationale",
-    "Top 3 FT% dans la finale du European Championship 2022",
-    "Club avec la plus grande taille moyenne",
-    "Sponsor le plus lié à des équipes championnes du monde",
-    "Meilleurs shooteurs à 3 pts par club (saison 2023-2024)"
-]
+    # Connexion à la base de données
+    conn = sqlite3.connect(db_path)
+    cursor = conn.cursor()
 
-# Lire toutes les requêtes depuis queries.sql
-with open("SQL Scripts/queries.sql", "r", encoding="utf-8") as f:
-    sql_script = f.read()
+    # Lire le fichier SQL
+    with open(sql_file_path, 'r', encoding='utf-8') as file:
+        sql_script = file.read()
 
-# SQLite ne peut pas exécuter tout le script d'un coup avec fetchall
-# On sépare les requêtes par ';' et on exécute individuellement
-queries = [q.strip() for q in sql_script.split(';') if q.strip()]
+    # Diviser le script en requêtes individuelles
+    queries = sql_script.split(';')
 
-for title, q in zip(titles, queries):
-    print(f"\n=== {title} ===")
-    try:
-        cursor.execute(q)
-        rows = cursor.fetchall()
-        if rows:
-            headers = [desc[0] for desc in cursor.description]
-            print(headers)
-            for row in rows:
-                print(row)
-        else:
-            print("Aucun résultat trouvé.")
-    except Exception as e:
-        print(f"Erreur : {e}")
+    # Exécuter chaque requête
+    for i, query in enumerate(queries):
+        query = query.strip()
+        if query:  # Ignorer les lignes vides
+            try:
+                cursor.execute(query)
+                results = cursor.fetchall()
 
-conn.close()
-print("\nToutes les requêtes ont été exécutées.")
+                # Afficher les résultats
+                if results:
+                    print(f"\nRésultats de la requête {i+1}:")
+                    column_names = [description[0] for description in cursor.description]
+                    print("\t" + "\t|\t".join(column_names))
+                    print("-" * (sum(len(col) for col in column_names) + 3 * len(column_names)))
+
+                    for row in results:
+                        print("\t" + "\t|\t".join(str(value) for value in row))
+                else:
+                    print(f"\nRequête {i+1} exécutée, aucun résultat.")
+
+            except sqlite3.Error as e:
+                print(f"\nErreur lors de l'exécution de la requête {i+1}: {e}")
+
+    # Fermer la connexion
+    conn.close()
+
+if __name__ == "__main__":
+    db_path = "basketball.db"
+    sql_file_path = "SQL Scripts/queries.sql"
+    execute_queries_from_file(db_path, sql_file_path)
